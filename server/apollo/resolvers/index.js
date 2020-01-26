@@ -19,6 +19,17 @@ const resolvers = {
         imageLink: result
       }
     }
+  },
+  Mutation: {
+    uploadImage: (_, { file, options }) => {
+      console.log(file);
+      const uploadImage = cloudinary.uploader.upload(file, options, (err, res) => console.log(err, res)).then(data => data);
+
+      console.log(uploadImage);
+      return {
+        uploadImage
+      }
+    }
   }
 };
 
