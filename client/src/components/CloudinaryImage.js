@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery, gql } from "@apollo/client";
 
 const GET_IMAGE_URL = gql`
-  query GetImageUrl($imageName: String! $transformOptions: TransformImageOptions) {
+  query GetImageUrl($imageName: String! $transformOptions: TransformImageOptionsInput) {
     getImageUrl(imageName: $imageName transformOptions: $transformOptions) {
       imageLink
     }

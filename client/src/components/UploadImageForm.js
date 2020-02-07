@@ -1,9 +1,8 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { useMutation, gql } from '@apollo/client';
-import { useDropzone } from 'react-dropzone';
 
 const UPLOAD_IMAGE_TO_CLOUDINARY = gql`
-  mutation UploadImageToCloudinary($file: FileInput! $uploadOptions: UploadOptionsInput){
+  mutation UploadImageToCloudinary($file: String! $uploadOptions: UploadOptionsInput){
     uploadImage(file: $file uploadOptions: $uploadOptions) {
       public_id
       url
@@ -15,39 +14,69 @@ const UPLOAD_IMAGE_TO_CLOUDINARY = gql`
 `
 
 export default function UploadImageForm(props) {
-  const [files, setFiles] = React.useState([]);
   const [uploadImage] = useMutation(UPLOAD_IMAGE_TO_CLOUDINARY)
-  const onDrop = acceptedFiles => {
-    console.log(acceptedFiles[0])
-    uploadImage({
-      variables: {
-        file: acceptedFiles[0]
-      }
-    }).then(data => console.log(data));
-  }
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const [fileToUpload, setFileToUpload] = React.useState({});
+  const [uploadOptions, setUploadOptions] = React.useState({});
+  const [filePreview, setFilePreview] = React.useState();
 
+  function handleChange(e) {
+    setUploadOptions({
+      ...uploadOptions,
+      public_id: e.target.value
+    });
+  }
+
+  function onSubmit(file, options) {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      uploadImage({
+        variables: {
+          file: reader.result,
+          uploadOptions: options
+        }
+      })
+    })
+    reader.readAsDataURL(file)
+  }
   return (
-    <div {...getRootProps()} style={{
-      height: 200,
-      width: 200,
-      border: '2px solid black',
-      borderRadius: 3
-    }}>
-      <input {...getInputProps()} />
-      {
-        isDragActive ? <p>Drop the files here</p> : <p>Drag 'n' drop some files here, or click to select files</p>
-      }
-      {
-        files.length > 0 && (
-          <Fragment>
-            <h3>Previews</h3>
-            {files.map(file => {
-              return <img alt="Preview" key={file.preview} src={file.path} />
-            })}
-          </Fragment>
-        )
-      }
+    <div style={container} >
+      <div>
+        <input type="text" placeholder="Image name" onChange={e => handleChange(e)} />
+        <input
+          type="file"
+          onChange={e => {
+            setFileToUpload(e.target.files[0]);
+            setFilePreview(URL.createObjectURL(e.target.files[0]));
+          }}
+        />
+        <button onClick={() => onSubmit(fileToUpload, uploadOptions)}> Upload Photo</button>
+      </div>
+      <div>
+        {
+          filePreview
+            ? <img style={image} src={filePreview} alt="a thing" />
+            : <img style={holder} alt="Upload Preview" src="" />
+        }
+      </div>
     </div>
   )
+}
+
+const container = {
+  height: 300,
+  width: 500,
+  border: '2px solid black',
+  borderRadius: 3,
+  display: 'flex'
+};
+
+const image = {
+  height: '100%',
+  width: '50%'
+}
+
+const holder = {
+  ...image,
+  background: 'lightgray',
+  fontSize: 24,
 }
