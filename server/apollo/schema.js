@@ -8,12 +8,10 @@ const typeDefs = gql`
     crop: String
   }
 
-  input FileInput {
-    name: String
-    lastModified: Int
-    size: Int
-    type: String
-    path: String
+  type File { 
+    filename: String!
+    mimetype: String!
+    encoding: String!
   }
 
   input UploadOptionsInput {
@@ -76,7 +74,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    uploadImage(file: FileInput! uploadOptions: UploadOptionsInput) : UploadedImage!
+    uploadImage(file: String! uploadOptions: UploadOptionsInput) : UploadedImage!
   }
 `;
 
