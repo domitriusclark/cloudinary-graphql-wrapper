@@ -15,8 +15,9 @@ const UPLOAD_IMAGE_TO_CLOUDINARY = gql`
 
 export default function UploadImageForm(props) {
   const [uploadImage] = useMutation(UPLOAD_IMAGE_TO_CLOUDINARY)
-  const [fileToUpload, setFileToUpload] = React.useState({});
+
   const [uploadOptions, setUploadOptions] = React.useState({});
+  const [fileToUpload, setFileToUpload] = React.useState({});
   const [filePreview, setFilePreview] = React.useState();
 
   function handleChange(e) {
@@ -34,10 +35,12 @@ export default function UploadImageForm(props) {
           file: reader.result,
           uploadOptions: options
         }
-      })
+      }).then(data => props.setUploadedImage(data.data.uploadImage))
+
     })
     reader.readAsDataURL(file)
   }
+
   return (
     <div style={container} >
       <div>
