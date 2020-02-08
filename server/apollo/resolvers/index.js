@@ -21,7 +21,7 @@ const resolvers = {
     }
   },
   Mutation: {
-    uploadImage: (_, { file, options }) => cloudinary.uploader.upload(file, options)
+    uploadImage: (_, { file, uploadOptions }) => cloudinary.uploader.upload(file, uploadOptions)
   }
 };
 

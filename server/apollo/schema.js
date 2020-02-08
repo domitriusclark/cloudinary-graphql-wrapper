@@ -8,12 +8,6 @@ const typeDefs = gql`
     crop: String
   }
 
-  type File { 
-    filename: String!
-    mimetype: String!
-    encoding: String!
-  }
-
   input UploadOptionsInput {
     public_id: String
     folder: String
