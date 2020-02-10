@@ -17,7 +17,7 @@ export default function SearchCloudinaryImageForm(props) {
     background: #393751;
     border: none;
     box-shadow: 5px 8px 26px rgba(0, 0, 0, 0.4);
-    border-radius: 8;
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -54,7 +54,7 @@ export default function SearchCloudinaryImageForm(props) {
 
   return (
     <div css={container}>
-      <h1>Search your Media</h1>
+      <h1>Search your media</h1>
       <form
         onSubmit={e => {
           e.preventDefault();

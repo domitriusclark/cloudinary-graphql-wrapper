@@ -22,7 +22,7 @@ export default function UploadImageForm(props) {
   const [uploadOptions, setUploadOptions] = React.useState({});
   const [fileToUpload, setFileToUpload] = React.useState({});
   const [filePreview, setFilePreview] = React.useState();
-  const [success, setSuccess] = React.useState(false);
+  const [uploadSuccess, setUploadSuccess] = React.useState(false);
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop })
 
@@ -47,7 +47,7 @@ export default function UploadImageForm(props) {
           uploadOptions: options
         }
       }).then(data => {
-        setSuccess(true);
+        setUploadSuccess(true);
         props.setUploadedImage(data.data.uploadImage)
       })
     })
@@ -61,7 +61,7 @@ export default function UploadImageForm(props) {
     background: #393751;
     border: none;
     box-shadow: 5px 8px 26px rgba(0, 0, 0, 0.4);
-    border-radius: 8;
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -118,7 +118,7 @@ export default function UploadImageForm(props) {
     <div css={container}>
       <h1>Upload to Cloudinary</h1>
       {
-        success && <p css={css`
+        uploadSuccess && <p css={css`
           color: lightgreen;
         `}>
           Successfully Uploaded!
