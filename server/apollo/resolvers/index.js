@@ -8,7 +8,7 @@ cloudinary.config({
 
 const resolvers = {
   Query: {
-    getImageUrl: (_, { imageName, transformOptions }, ctx) => {
+    getImageUrl: (_, { imageName, transformOptions }) => {
       let result = ''
       if (transformOptions) {
         result = cloudinary.url(imageName, { ...transformOptions });
@@ -19,6 +19,9 @@ const resolvers = {
         imageLink: result
       }
     }
+  },
+  Mutation: {
+    uploadImage: (_, { file, uploadOptions }) => cloudinary.uploader.upload(file, uploadOptions)
   }
 };
 
