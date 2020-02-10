@@ -1,4 +1,5 @@
-import React from 'react';
+/** @jsx jsx */
+import { css, jsx } from '@emotion/core';
 import { useQuery, gql } from "@apollo/client";
 
 const GET_IMAGE_URL = gql`
@@ -26,7 +27,9 @@ export default function CloudinaryImage(props) {
   if (error) return <p>{error.message}</p>;
 
   return (
-    <div>
+    <div css={css`
+      margin-top: 50px;
+    `}>
       {data && <img src={data.getImageUrl.imageLink} alt="Cloudinary" />}
     </div>
   )

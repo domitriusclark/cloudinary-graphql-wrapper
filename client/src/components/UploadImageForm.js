@@ -1,5 +1,8 @@
+/** @jsx jsx  */
+import { css, jsx } from '@emotion/core';
 import React from 'react';
 import { useMutation, gql } from '@apollo/client';
+import { useDropzone } from 'react-dropzone';
 
 const UPLOAD_IMAGE_TO_CLOUDINARY = gql`
   mutation UploadImageToCloudinary($file: String! $uploadOptions: UploadOptionsInput){
@@ -19,6 +22,14 @@ export default function UploadImageForm(props) {
   const [uploadOptions, setUploadOptions] = React.useState({});
   const [fileToUpload, setFileToUpload] = React.useState({});
   const [filePreview, setFilePreview] = React.useState();
+  const [success, setSuccess] = React.useState(false);
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop })
+
+  function onDrop(acceptedFiles) {
+    setFileToUpload(acceptedFiles[0]);
+    setFilePreview(URL.createObjectURL(acceptedFiles[0]));
+  }
 
   function handleChange(e) {
     setUploadOptions({
@@ -35,51 +46,90 @@ export default function UploadImageForm(props) {
           file: reader.result,
           uploadOptions: options
         }
-      }).then(data => props.setUploadedImage(data.data.uploadImage))
-
+      }).then(data => {
+        setSuccess(true);
+        props.setUploadedImage(data.data.uploadImage)
+      })
     })
     reader.readAsDataURL(file)
   }
 
+  const container = css`
+    color: white;
+    width: 490px;
+    height: 400px;
+    background: #393751;
+    border: none;
+    box-shadow: 5px 8px 26px rgba(0, 0, 0, 0.4);
+    border-radius: 8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+
+    & h1 {
+      font-size: 32px;
+      letter-spacing: 2px;
+    }
+  `
+
+
+  const dropzone = css`
+    width: 379px;
+    height: 191px;
+    background: ${filePreview ? `url(${filePreview}) no-repeat` : '#2F2E45'};
+    background-size: cover;
+    border: 1px dashed #FFFFFF;
+    box-sizing: border - box;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  `;
+
+  const dropzoneText = css`
+    color: white;
+    font-size: 16px;
+  `
+
+  const textInput = css`
+    width: 379px;
+    height: 40px;
+    background: #FFFFFF;
+    border-radius: 4px;
+    border: none;
+    font-size: 14px;
+    padding-left: 8px;
+  `
+
+  const uploadButton = css`
+    width: 370px;
+    height: 35px;
+    background: #7A61DF;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    box-shadow: 5px 8px 10px rgba(0, 0, 0, 0.4);
+  `
+
   return (
-    <div style={container} >
-      <div>
-        <input type="text" placeholder="Image name" onChange={e => handleChange(e)} />
-        <input
-          type="file"
-          onChange={e => {
-            setFileToUpload(e.target.files[0]);
-            setFilePreview(URL.createObjectURL(e.target.files[0]));
-          }}
-        />
-        <button onClick={() => onSubmit(fileToUpload, uploadOptions)}> Upload Photo</button>
+    <div css={container}>
+      <h1>Upload to Cloudinary</h1>
+      {
+        success && <p css={css`
+          color: lightgreen;
+        `}>
+          Successfully Uploaded!
+        </p>
+      }
+      <input css={textInput} type="text" placeholder="Title" onChange={e => handleChange(e)} />
+      <div css={dropzone} {...getRootProps()}>
+        <input {...getInputProps()} />
+        <p css={dropzoneText}>Choose file to upload...</p>
       </div>
-      <div>
-        {
-          filePreview
-            ? <img style={image} src={filePreview} alt="a thing" />
-            : <img style={holder} alt="Upload Preview" src="" />
-        }
-      </div>
+      <button css={uploadButton} onClick={() => onSubmit(fileToUpload, uploadOptions)}> Upload Photo</button>
     </div>
-  )
-}
-
-const container = {
-  height: 300,
-  width: 500,
-  border: '2px solid black',
-  borderRadius: 3,
-  display: 'flex'
+  );
 };
-
-const image = {
-  height: '100%',
-  width: '50%'
-}
-
-const holder = {
-  ...image,
-  background: 'lightgray',
-  fontSize: 24,
-}
