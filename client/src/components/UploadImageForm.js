@@ -1,6 +1,5 @@
-/** @jsx jsx  */
-import { css, jsx } from '@emotion/core';
 import React from 'react';
+import { css } from '@emotion/core';
 import { useMutation, gql } from '@apollo/client';
 import { useDropzone } from 'react-dropzone';
 
